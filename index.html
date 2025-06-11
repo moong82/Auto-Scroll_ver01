@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #FFD700; /* 노란색 버튼 */
-      color: black;
+      background: #1e90ff; /* 파란색 버튼 */
+      color: white;
       min-width: 45px;
     }
     .settings {
@@ -74,10 +74,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #FFD700; /* 노란색 버튼 */
+      background: #1e90ff; /* 파란색 버튼 */
       border: none;
       border-radius: 6px;
-      color: black;
+      color: white;
     }
     #iframeContainer {
       position: absolute;
@@ -143,9 +143,16 @@
     const iframeContainer = document.getElementById("iframeContainer");
     const scrollBar = document.getElementById("scrollBar");
 
+    function getSiteScrollbar() {
+      return iframeContainer.contentWindow.document.documentElement || iframeContainer.contentWindow.document.body;
+    }
+
     function updateScrollBar() {
-      let maxScroll = iframeContainer.scrollHeight - iframeContainer.clientHeight;
-      let ratio = iframeContainer.scrollTop / maxScroll;
+      const siteScrollbar = getSiteScrollbar();
+      if (!siteScrollbar) return;
+
+      let maxScroll = siteScrollbar.scrollHeight - siteScrollbar.clientHeight;
+      let ratio = siteScrollbar.scrollTop / maxScroll;
       let targetTop = 110 + ratio * (window.innerHeight - 170);
       
       let diff = targetTop - parseFloat(scrollBar.style.top);
@@ -157,8 +164,11 @@
     }
 
     function moveScroll(amount) {
-      iframeContainer.scrollTop += amount;
-      updateScrollBar();
+      const siteScrollbar = getSiteScrollbar();
+      if (siteScrollbar) {
+        siteScrollbar.scrollTop += amount;
+        updateScrollBar();
+      }
     }
 
     iframeContainer.addEventListener("scroll", updateScrollBar);
@@ -178,13 +188,19 @@
     });
 
     document.getElementById("topBtn").addEventListener("click", () => {
-      iframeContainer.scrollTop = 0;
-      updateScrollBar();
+      const siteScrollbar = getSiteScrollbar();
+      if (siteScrollbar) {
+        siteScrollbar.scrollTop = 0;
+        updateScrollBar();
+      }
     });
 
     document.getElementById("downBtn").addEventListener("click", () => {
-      iframeContainer.scrollTop = iframeContainer.scrollHeight;
-      updateScrollBar();
+      const siteScrollbar = getSiteScrollbar();
+      if (siteScrollbar) {
+        siteScrollbar.scrollTop = siteScrollbar.scrollHeight;
+        updateScrollBar();
+      }
     });
 
     document.getElementById("settingsBtn").addEventListener("click", () => {
