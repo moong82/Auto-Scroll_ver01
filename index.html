@@ -22,15 +22,15 @@
       border-radius: 10px;
       padding: 6px 8px;
       display: flex;
-      gap: 6px;
+      gap: 4px;
       flex-wrap: wrap;
       box-sizing: border-box;
       white-space: normal;
       z-index: 3000;
     }
     .controls button {
-      padding: 5px 8px;
-      font-size: 10px;
+      padding: 4px 6px;
+      font-size: 9px;
       border: none;
       border-radius: 6px;
       background: #1e90ff;
@@ -64,11 +64,12 @@
     }
     #urlInput {
       flex: 1;
-      padding: 6px;
+      padding: 5px;
       font-size: 12px;
+      max-width: 75%;
     }
     #urlBar button {
-      padding: 5px 8px;
+      padding: 4px 6px;
       font-size: 10px;
     }
     #iframeContainer {
@@ -94,10 +95,10 @@
   </div>
 
   <div class="controls" id="controls">
-    <button onclick="startScroll()">Start</button>
-    <button onclick="stopScroll()">Stop</button>
-    <button onclick="scrollToTop()">Top</button>
-    <button onclick="scrollToBottom()">Down</button>
+    <button id="startBtn" onclick="startScroll()">Start</button>
+    <button id="stopBtn" onclick="stopScroll()">Stop</button>
+    <button id="topBtn" onclick="scrollToTop()">Top</button>
+    <button id="downBtn" onclick="scrollToBottom()">Down</button>
     <button onclick="toggleSettings()">Setting</button>
   </div>
 
@@ -119,20 +120,23 @@
     let interval = 2;
     let distance = 100;
     const iframeContainer = document.getElementById("iframeContainer");
+    const topBtn = document.getElementById("topBtn");
+    const downBtn = document.getElementById("downBtn");
 
     function startScroll() {
       stopScroll();
+      topBtn.disabled = true;
+      downBtn.disabled = true;
       timer = setInterval(() => {
-        if (iframeContainer.scrollTop + iframeContainer.clientHeight >= iframeContainer.scrollHeight - 1) {
-          stopScroll();
-          return;
-        }
         iframeContainer.scrollBy(0, distance);
       }, interval * 1000);
     }
 
     function stopScroll() {
       clearInterval(timer);
+      timer = null;
+      topBtn.disabled = false;
+      downBtn.disabled = false;
     }
 
     function scrollToTop() {
