@@ -18,12 +18,12 @@
     right: 0;
     background: #222;
     padding: 8px 10px;
-    display: flex;
+    display: flex; /* 기본 표시 */
     gap: 8px;
     align-items: center;
-    flex-wrap: nowrap;      /* 줄바꿈 방지 */
+    flex-wrap: nowrap;
     z-index: 3000;
-    overflow-x: auto;       /* 너무 많으면 가로 스크롤 생김 */
+    overflow-x: auto;
   }
   .top-bar button {
     background: #1e90ff;
@@ -33,8 +33,8 @@
     color: white;
     font-size: 14px;
     cursor: pointer;
-    white-space: nowrap;    /* 텍스트 줄바꿈 방지 */
-    flex-shrink: 0;         /* 버튼 크기 축소 방지 */
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .url-input-container {
     position: fixed;
@@ -42,22 +42,4 @@
     left: 0;
     right: 0;
     background: #222;
-    padding: 8px 10px;
-    display: none;
-    gap: 6px;
-    z-index: 3000;
-  }
-  .url-input-container input {
-    flex: 1;
-    padding: 8px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: none;
-  }
-  .url-input-container button {
-    background: #1e90ff;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 14px;
-    color: white;
-    fo
+    padding: 8px
