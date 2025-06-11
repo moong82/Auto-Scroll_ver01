@@ -6,32 +6,28 @@
   <title>웹툰 자동 스크롤</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: transparent;
+      margin: 0; padding: 0; height: 100%;
+      overflow: hidden; /* body 자체 스크롤 제거 */
       font-family: sans-serif;
+      background: transparent;
     }
     body {
       background: transparent;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
     .controls {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 10px;
+      background: rgba(0,0,0,0.6);
       padding: 8px 10px;
       display: flex;
-      flex-direction: row;
       flex-wrap: nowrap;
       gap: 8px;
-      z-index: 3000;
       white-space: nowrap;
       overflow-x: auto;
-      max-width: 90vw;
+      max-width: 100vw;
       box-sizing: border-box;
+      z-index: 3000;
     }
     .controls button {
       padding: 6px 10px;
@@ -41,60 +37,74 @@
       border-radius: 6px;
       background: #1e90ff;
       color: white;
-      white-space: nowrap;
-      flex-shrink: 0;
       cursor: pointer;
+      flex-shrink: 0;
     }
-    .settings {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #111;
-      color: white;
-      padding: 20px;
-      display: none;
-      z-index: 3000;
+    #urlInput {
+      flex-grow: 1;
+      padding: 6px 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      min-width: 100px;
     }
-    .settings input {
+    #iframeContainer {
+      flex-grow: 1;
+      overflow-y: auto;
+      position: relative;
+      background: #000; /* 배경 어둡게 */
+      -webkit-overflow-scrolling: touch;
+    }
+    #webtoonIframe {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      box-sizing: border-box;
+      height: 3000px; /* 임의 크게 잡음, iframe 자체는 내부 스크롤 없음 */
+      border: none;
+      pointer-events: auto;
     }
   </style>
 </head>
 <body>
-  <div class="controls" id="controls">
+  <div class="controls">
+    <input id="urlInput" type="text" placeholder="웹툰 URL 입력 후 Enter" />
+    <button onclick="loadIframe()">Go</button>
     <button onclick="startScroll()">Start</button>
     <button onclick="stopScroll()">Stop</button>
     <button onclick="scrollToTop()">Top</button>
     <button onclick="scrollToBottom()">Down</button>
-    <button onclick="toggleSettings()">Setting</button>
   </div>
 
-  <div class="settings" id="settings">
-    <label>스크롤 간격 (초):</label>
-    <input type="number" id="interval" value="2" min="0.1" step="0.1" />
-    <label>스크롤 거리 (픽셀):</label>
-    <input type="number" id="distance" value="100" min="1" />
-    <button onclick="saveSettings()">설정 저장</button>
-    <button onclick="toggleSettings()">뒤로가기</button>
-  </div>
-
-  <div style="height: 3000px; background: transparent; position: relative;">
-    <div style="position: fixed; top: 0; left: 0; width: 5px; height: 100%; background: rgba(30,144,255, 0.7); z-index: 1000;"></div>
+  <div id="iframeContainer">
+    <iframe id="webtoonIframe" src="" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
   </div>
 
   <script>
+    const iframeContainer = document.getElementById('iframeContainer');
+    const iframe = document.getElementById('webtoonIframe');
+    const urlInput = document.getElementById('urlInput');
     let timer = null;
     let interval = 2;
     let distance = 100;
 
+    function loadIframe() {
+      const url = urlInput.value.trim();
+      if (url) {
+        iframe.src = url;
+        // iframe 높이 조절은 일단 고정 높이로 둠
+        iframe.style.height = '3000px';
+        iframeContainer.scrollTop = 0;
+      }
+    }
+    urlInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        loadIframe();
+      }
+    });
+
     function startScroll() {
       stopScroll();
       timer = setInterval(() => {
-        window.scrollBy(0, distance);
+        iframeContainer.scrollBy(0, distance);
       }, interval * 1000);
     }
 
@@ -103,22 +113,11 @@
     }
 
     function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      iframeContainer.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function scrollToBottom() {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
-
-    function toggleSettings() {
-      const s = document.getElementById("settings");
-      s.style.display = s.style.display === "block" ? "none" : "block";
-    }
-
-    function saveSettings() {
-      interval = parseFloat(document.getElementById("interval").value);
-      distance = parseInt(document.getElementById("distance").value);
-      toggleSettings();
+      iframeContainer.scrollTo({ top: iframeContainer.scrollHeight, behavior: 'smooth' });
     }
   </script>
 </body>
