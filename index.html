@@ -1,47 +1,187 @@
-let timer = null;
-let interval = 2;
-let distance = 100;
-const iframe = document.getElementById("webview");
-const topBtn = document.getElementById("topBtn");
-const downBtn = document.getElementById("downBtn");
-
-function getIframeScrollTarget() {
-  try {
-    return iframe.contentWindow.document.scrollingElement || iframe.contentWindow.document.body;
-  } catch (e) {
-    return null;
-  }
-}
-
-function startScroll() {
-  stopScroll();
-  topBtn.disabled = true;
-  downBtn.disabled = true;
-  timer = setInterval(() => {
-    const target = getIframeScrollTarget();
-    if (target) {
-      target.scrollBy(0, distance);
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>웹툰 자동 스크롤</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: transparent;
+      font-family: sans-serif;
+      overflow: hidden;
     }
-  }, interval * 1000);
-}
+    .controls {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      z-index: 3000;
+    }
+    .controls button {
+      padding: 4px 6px;
+      font-size: 9px;
+      border: none;
+      border-radius: 6px;
+      background: #1e90ff;
+      color: white;
+      min-width: 45px;
+    }
+    .settings {
+      position: fixed;
+      top: 110px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: white;
+      padding: 20px;
+      display: none;
+      z-index: 3000;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 10px;
+    }
+    .settings input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    #urlBar {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      z-index: 3001;
+      display: flex;
+      gap: 4px;
+    }
+    #urlInput {
+      flex: 1;
+      padding: 5px;
+      font-size: 12px;
+      max-width: 65%;
+    }
+    #urlBar button {
+      padding: 4px 6px;
+      font-size: 10px;
+    }
+    #iframeContainer {
+      position: absolute;
+      top: 110px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: scroll;
+      background: transparent;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    #scrollMarker {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: rgba(30, 144, 255, 0.5);
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div id="scrollMarker"></div>
 
-function stopScroll() {
-  clearInterval(timer);
-  timer = null;
-  topBtn.disabled = false;
-  downBtn.disabled = false;
-}
+  <div id="urlBar">
+    <input type="text" id="urlInput" placeholder="https://" />
+    <button onclick="loadSite()">이동</button>
+  </div>
 
-function scrollToTop() {
-  const target = getIframeScrollTarget();
-  if (target) {
-    target.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
+  <div class="controls" id="controls">
+    <button id="startBtn" onclick="startScroll()">Start</button>
+    <button id="stopBtn" onclick="stopScroll()">Stop</button>
+    <button id="topBtn" onclick="scrollToTop()">Top</button>
+    <button id="downBtn" onclick="scrollToBottom()">Down</button>
+    <button onclick="toggleSettings()">Setting</button>
+  </div>
 
-function scrollToBottom() {
-  const target = getIframeScrollTarget();
-  if (target) {
-    target.scrollTo({ top: target.scrollHeight, behavior: 'smooth' });
-  }
-}
+  <div class="settings" id="settings">
+    <label>스크롤 간격 (초):</label>
+    <input type="number" id="interval" value="2" min="0.1" step="0.1" />
+    <label>스크롤 거리 (픽셀):</label>
+    <input type="number" id="distance" value="100" min="1" />
+    <button onclick="saveSettings()">설정 저장</button>
+    <button onclick="toggleSettings()">뒤로가기</button>
+  </div>
+
+  <div id="iframeContainer">
+    <iframe id="webview" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+  </div>
+
+  <script>
+    let timer = null;
+    let interval = 2;
+    let distance = 100;
+    const iframeContainer = document.getElementById("iframeContainer");
+    const topBtn = document.getElementById("topBtn");
+    const downBtn = document.getElementById("downBtn");
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+
+    function startScroll() {
+      stopScroll();
+      topBtn.disabled = true;
+      downBtn.disabled = true;
+      timer = setInterval(() => {
+        iframeContainer.scrollBy(0, distance);
+      }, interval * 1000);
+    }
+
+    function stopScroll() {
+      clearInterval(timer);
+      timer = null;
+      topBtn.disabled = false;
+      downBtn.disabled = false;
+    }
+
+    function scrollToTop() {
+      if (!topBtn.disabled) {
+        iframeContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function scrollToBottom() {
+      if (!downBtn.disabled) {
+        iframeContainer.scrollTo({ top: iframeContainer.scrollHeight, behavior: 'smooth' });
+      }
+    }
+
+    function toggleSettings() {
+      const s = document.getElementById("settings");
+      s.style.display = s.style.display === "block" ? "none" : "block";
+    }
+
+    function saveSettings() {
+      interval = parseFloat(document.getElementById("interval").value);
+      distance = parseInt(document.getElementById("distance").value);
+      toggleSettings();
+    }
+
+    function loadSite() {
+      const url = document.getElementById("urlInput").value;
+      document.getElementById("webview").src = url;
+    }
+  </script>
+</body>
+</html>
