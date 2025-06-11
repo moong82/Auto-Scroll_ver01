@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #1e90ff; /* 파란색 버튼 */
-      color: white;
+      background: #FFD700; /* 노란색 버튼 */
+      color: black;
       min-width: 45px;
     }
     .settings {
@@ -74,10 +74,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #1e90ff; /* 파란색 버튼 */
+      background: #FFD700; /* 노란색 버튼 */
       border: none;
       border-radius: 6px;
-      color: white;
+      color: black;
     }
     #iframeContainer {
       position: absolute;
@@ -113,11 +113,11 @@
   </div>
 
   <div class="controls" id="controls">
-    <button id="startBtn" onclick="startScroll()">Start</button>
-    <button id="stopBtn" onclick="stopScroll()">Stop</button>
-    <button id="topBtn" onclick="scrollToTop()">Top</button>
-    <button id="downBtn" onclick="scrollToBottom()">Down</button>
-    <button onclick="toggleSettings()">Setting</button>
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+    <button id="topBtn">Top</button>
+    <button id="downBtn">Down</button>
+    <button id="settingsBtn">Setting</button>
   </div>
 
   <div class="settings" id="settings">
@@ -125,8 +125,8 @@
     <input type="number" id="interval" value="2" min="0.1" step="0.1" />
     <label>스크롤 거리 (픽셀):</label>
     <input type="number" id="distance" value="100" min="1" />
-    <button onclick="saveSettings()">설정 저장</button>
-    <button onclick="toggleSettings()">뒤로가기</button>
+    <button id="saveSettingsBtn">설정 저장</button>
+    <button id="backSettingsBtn">뒤로가기</button>
   </div>
 
   <div id="iframeContainer">
@@ -142,18 +142,17 @@
     let distance = 100;
     const iframeContainer = document.getElementById("iframeContainer");
     const scrollBar = document.getElementById("scrollBar");
-    
+
     function updateScrollBar() {
       let maxScroll = iframeContainer.scrollHeight - iframeContainer.clientHeight;
       let ratio = iframeContainer.scrollTop / maxScroll;
       let targetTop = 110 + ratio * (window.innerHeight - 170);
       
-      // 자석 효과: 일정 거리 이내에서는 자동 정렬
       let diff = targetTop - parseFloat(scrollBar.style.top);
       if (Math.abs(diff) < 10) {
         scrollBar.style.top = `${targetTop}px`;
       } else {
-        scrollBar.style.top = `${parseFloat(scrollBar.style.top) + diff * 0.1}px`; // 부드러운 이동
+        scrollBar.style.top = `${parseFloat(scrollBar.style.top) + diff * 0.1}px`;
       }
     }
 
@@ -162,8 +161,49 @@
       updateScrollBar();
     }
 
-    // 스크롤 이벤트 감지하여 자석 효과 적용
     iframeContainer.addEventListener("scroll", updateScrollBar);
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+      stopScroll();
+      function scrollStep() {
+        moveScroll(distance);
+        timer = setTimeout(scrollStep, interval * 1000);
+      }
+      scrollStep();
+    });
+
+    document.getElementById("stopBtn").addEventListener("click", () => {
+      clearTimeout(timer);
+      timer = null;
+    });
+
+    document.getElementById("topBtn").addEventListener("click", () => {
+      iframeContainer.scrollTop = 0;
+      updateScrollBar();
+    });
+
+    document.getElementById("downBtn").addEventListener("click", () => {
+      iframeContainer.scrollTop = iframeContainer.scrollHeight;
+      updateScrollBar();
+    });
+
+    document.getElementById("settingsBtn").addEventListener("click", () => {
+      document.getElementById("settings").style.display = "block";
+    });
+
+    document.getElementById("backSettingsBtn").addEventListener("click", () => {
+      document.getElementById("settings").style.display = "none";
+    });
+
+    document.getElementById("saveSettingsBtn").addEventListener("click", () => {
+      interval = parseFloat(document.getElementById("interval").value);
+      distance = parseInt(document.getElementById("distance").value);
+      document.getElementById("settings").style.display = "none";
+    });
+
+    document.getElementById("urlBar button").addEventListener("click", () => {
+      document.getElementById("webview").src = document.getElementById("urlInput").value;
+    });
   </script>
 </body>
 </html>
