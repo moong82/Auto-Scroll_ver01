@@ -50,11 +50,6 @@
       max-width: 400px;
       border-radius: 10px;
     }
-    .settings input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-    }
     #urlBar {
       position: fixed;
       top: 10px;
@@ -109,7 +104,7 @@
 <body>
   <div id="urlBar">
     <input type="text" id="urlInput" value="https://newtoki468.com" placeholder="https://" />
-    <button onclick="loadSite()">이동</button>
+    <button id="loadBtn">이동</button>
   </div>
 
   <div class="controls" id="controls">
@@ -130,7 +125,7 @@
   </div>
 
   <div id="iframeContainer">
-    <iframe id="webview" src="https://newtoki468.com"></iframe>
+    <iframe id="webview" src="about:blank"></iframe>
   </div>
 
   <!-- 세로바 -->
@@ -154,7 +149,7 @@
       let maxScroll = siteScrollbar.scrollHeight - siteScrollbar.clientHeight;
       let ratio = siteScrollbar.scrollTop / maxScroll;
       let targetTop = 110 + ratio * (window.innerHeight - 170);
-      
+
       let diff = targetTop - parseFloat(scrollBar.style.top);
       if (Math.abs(diff) < 10) {
         scrollBar.style.top = `${targetTop}px`;
@@ -171,51 +166,41 @@
       }
     }
 
-    iframe.addEventListener("load", updateScrollBar);
+    window.onload = function() {
+      document.getElementById("startBtn").addEventListener("click", () => {
+        stopScroll();
+        function scrollStep() {
+          moveScroll(distance);
+          timer = setTimeout(scrollStep, interval * 1000);
+        }
+        scrollStep();
+      });
 
-    document.getElementById("startBtn").addEventListener("click", () => {
-      stopScroll();
-      function scrollStep() {
-        moveScroll(distance);
-        timer = setTimeout(scrollStep, interval * 1000);
-      }
-      scrollStep();
-    });
+      document.getElementById("stopBtn").addEventListener("click", () => {
+        clearTimeout(timer);
+        timer = null;
+      });
 
-    document.getElementById("stopBtn").addEventListener("click", () => {
-      clearTimeout(timer);
-      timer = null;
-    });
+      document.getElementById("topBtn").addEventListener("click", () => {
+        const siteScrollbar = getSiteScrollbar();
+        if (siteScrollbar) {
+          siteScrollbar.scrollTop = 0;
+          updateScrollBar();
+        }
+      });
 
-    document.getElementById("topBtn").addEventListener("click", () => {
-      const siteScrollbar = getSiteScrollbar();
-      if (siteScrollbar) {
-        siteScrollbar.scrollTop = 0;
-        updateScrollBar();
-      }
-    });
+      document.getElementById("downBtn").addEventListener("click", () => {
+        const siteScrollbar = getSiteScrollbar();
+        if (siteScrollbar) {
+          siteScrollbar.scrollTop = siteScrollbar.scrollHeight;
+          updateScrollBar();
+        }
+      });
 
-    document.getElementById("downBtn").addEventListener("click", () => {
-      const siteScrollbar = getSiteScrollbar();
-      if (siteScrollbar) {
-        siteScrollbar.scrollTop = siteScrollbar.scrollHeight;
-        updateScrollBar();
-      }
-    });
-
-    document.getElementById("settingsBtn").addEventListener("click", () => {
-      document.getElementById("settings").style.display = "block";
-    });
-
-    document.getElementById("backSettingsBtn").addEventListener("click", () => {
-      document.getElementById("settings").style.display = "none";
-    });
-
-    document.getElementById("saveSettingsBtn").addEventListener("click", () => {
-      interval = parseFloat(document.getElementById("interval").value);
-      distance = parseInt(document.getElementById("distance").value);
-      document.getElementById("settings").style.display = "none";
-    });
+      document.getElementById("loadBtn").addEventListener("click", () => {
+        document.getElementById("webview").src = document.getElementById("urlInput").value;
+      });
+    };
   </script>
 </body>
 </html>
