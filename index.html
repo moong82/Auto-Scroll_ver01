@@ -5,60 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>웹툰 자동 스크롤</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: sans-serif;
-      background: #000;
-      color: white;
-    }
-    .url-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #222;
-      padding: 10px;
-      display: flex;
-      z-index: 2000;
-      gap: 5px;
-    }
-    .url-bar input {
-      flex: 1;
-      padding: 8px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: none;
-    }
-    .url-bar button {
-      padding: 8px 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      background: #1e90ff;
-      color: white;
-    }
-    .iframe-container {
-      position: absolute;
-      top: 50px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    }
-    iframe {
-      width: 100%;
+      padding: 0;
       height: 100%;
-      border: none;
+      background: transparent;
+      font-family: sans-serif;
+    }
+    body {
+      background: transparent;
     }
     .controls {
       position: fixed;
-      top: 60px;
+      top: 10px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.6);
       border-radius: 10px;
       padding: 10px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: wrap;
       gap: 10px;
       z-index: 3000;
     }
@@ -89,15 +56,6 @@
   </style>
 </head>
 <body>
-  <div class="url-bar">
-    <input type="text" id="urlInput" placeholder="웹툰 주소 입력 (예: https://comic.naver.com)" />
-    <button onclick="navigateToURL()">접속</button>
-  </div>
-
-  <div class="iframe-container">
-    <iframe id="webtoonFrame" src="about:blank"></iframe>
-  </div>
-
   <div class="controls" id="controls">
     <button onclick="startScroll()">스타트</button>
     <button onclick="stopScroll()">정지</button>
@@ -123,8 +81,7 @@
     function startScroll() {
       stopScroll();
       timer = setInterval(() => {
-        const frame = document.getElementById("webtoonFrame");
-        frame.contentWindow.scrollBy(0, distance);
+        window.scrollBy(0, distance);
       }, interval * 1000);
     }
 
@@ -133,13 +90,11 @@
     }
 
     function scrollToTop() {
-      const frame = document.getElementById("webtoonFrame");
-      frame.contentWindow.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function scrollToBottom() {
-      const frame = document.getElementById("webtoonFrame");
-      frame.contentWindow.scrollTo({ top: 999999, behavior: 'smooth' });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
     function toggleSettings() {
@@ -151,16 +106,6 @@
       interval = parseFloat(document.getElementById("interval").value);
       distance = parseInt(document.getElementById("distance").value);
       toggleSettings();
-    }
-
-    function navigateToURL() {
-      const url = document.getElementById("urlInput").value;
-      const frame = document.getElementById("webtoonFrame");
-      if (!/^https?:\/\//.test(url)) {
-        alert("https:// 또는 http:// 로 시작하는 전체 URL을 입력해주세요.");
-        return;
-      }
-      frame.src = url;
     }
   </script>
 </body>
