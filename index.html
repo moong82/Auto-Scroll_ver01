@@ -89,20 +89,9 @@
       height: 100%;
       border: none;
     }
-    #scrollMarker {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: rgba(30, 144, 255, 0.5);
-      z-index: 1000;
-    }
   </style>
 </head>
 <body>
-  <div id="scrollMarker"></div>
-
   <div id="urlBar">
     <input type="text" id="urlInput" placeholder="https://" />
     <button onclick="loadSite()">이동</button>
@@ -133,51 +122,26 @@
     let timer = null;
     let interval = 2;
     let distance = 100;
-    const iframe = document.getElementById("webview");
-    const topBtn = document.getElementById("topBtn");
-    const downBtn = document.getElementById("downBtn");
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-
-    function getIframeScrollTarget() {
-      try {
-        return iframe.contentWindow.document.scrollingElement || iframe.contentWindow.document.body;
-      } catch (e) {
-        return null;
-      }
-    }
+    const iframeContainer = document.getElementById("iframeContainer");
 
     function startScroll() {
       stopScroll();
-      topBtn.disabled = true;
-      downBtn.disabled = true;
       timer = setInterval(() => {
-        const target = getIframeScrollTarget();
-        if (target) {
-          target.scrollBy(0, distance);
-        }
+        iframeContainer.scrollBy(0, distance);
       }, interval * 1000);
     }
 
     function stopScroll() {
       clearInterval(timer);
       timer = null;
-      topBtn.disabled = false;
-      downBtn.disabled = false;
     }
 
     function scrollToTop() {
-      const target = getIframeScrollTarget();
-      if (target && !topBtn.disabled) {
-        target.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      iframeContainer.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function scrollToBottom() {
-      const target = getIframeScrollTarget();
-      if (target && !downBtn.disabled) {
-        target.scrollTo({ top: target.scrollHeight, behavior: 'smooth' });
-      }
+      iframeContainer.scrollTo({ top: iframeContainer.scrollHeight, behavior: 'smooth' });
     }
 
     function toggleSettings() {
