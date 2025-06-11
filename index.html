@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #FFD700; /* 노란색 버튼 */
-      color: black;
+      background: #1e90ff; /* 파란색 버튼 */
+      color: white;
       min-width: 45px;
     }
     .settings {
@@ -74,10 +74,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #FFD700; /* 노란색 버튼 */
+      background: #1e90ff; /* 파란색 버튼 */
       border: none;
       border-radius: 6px;
-      color: black;
+      color: white;
     }
     #iframeContainer {
       position: absolute;
@@ -146,7 +146,15 @@
     function updateScrollBar() {
       let maxScroll = iframeContainer.scrollHeight - iframeContainer.clientHeight;
       let ratio = iframeContainer.scrollTop / maxScroll;
-      scrollBar.style.top = `${110 + ratio * (window.innerHeight - 170)}px`;
+      let targetTop = 110 + ratio * (window.innerHeight - 170);
+      
+      // 자석 효과: 일정 거리 이내에서는 자동 정렬
+      let diff = targetTop - parseFloat(scrollBar.style.top);
+      if (Math.abs(diff) < 10) {
+        scrollBar.style.top = `${targetTop}px`;
+      } else {
+        scrollBar.style.top = `${parseFloat(scrollBar.style.top) + diff * 0.1}px`; // 부드러운 이동
+      }
     }
 
     function moveScroll(amount) {
@@ -154,67 +162,8 @@
       updateScrollBar();
     }
 
-    // 사용자가 세로바를 직접 드래그하면 실제 화면이 스크롤되도록 설정
-    scrollBar.addEventListener("mousedown", (e) => {
-      let startY = e.clientY;
-      
-      function onMouseMove(e) {
-        let maxScroll = iframeContainer.scrollHeight - iframeContainer.clientHeight;
-        let deltaY = e.clientY - startY;
-        let newScroll = iframeContainer.scrollTop + deltaY * (maxScroll / (window.innerHeight - 170));
-        iframeContainer.scrollTop = Math.max(0, Math.min(newScroll, maxScroll));
-        
-        startY = e.clientY;
-      }
-      
-      function onMouseUp() {
-        document.removeEventListener("mousemove", onMouseMove);
-        document.removeEventListener("mouseup", onMouseUp);
-      }
-      
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
-    });
-
-    function startScroll() {
-      stopScroll();
-      function scrollStep() {
-        moveScroll(distance);
-        timer = setTimeout(scrollStep, interval * 1000);
-      }
-      scrollStep();
-    }
-
-    function stopScroll() {
-      clearTimeout(timer);
-      timer = null;
-    }
-
-    function scrollToTop() {
-      iframeContainer.scrollTop = 0;
-      updateScrollBar();
-    }
-
-    function scrollToBottom() {
-      iframeContainer.scrollTop = iframeContainer.scrollHeight;
-      updateScrollBar();
-    }
-
-    function toggleSettings() {
-      const s = document.getElementById("settings");
-      s.style.display = s.style.display === "block" ? "none" : "block";
-    }
-
-    function saveSettings() {
-      interval = parseFloat(document.getElementById("interval").value);
-      distance = parseInt(document.getElementById("distance").value);
-      toggleSettings();
-    }
-
-    function loadSite() {
-      const url = document.getElementById("urlInput").value;
-      document.getElementById("webview").src = url;
-    }
+    // 스크롤 이벤트 감지하여 자석 효과 적용
+    iframeContainer.addEventListener("scroll", updateScrollBar);
   </script>
 </body>
 </html>
