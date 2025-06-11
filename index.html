@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #FFD700; /* 노란색 버튼 */
-      color: black;
+      background: #1e90ff; /* 파란색 버튼 */
+      color: white;
       min-width: 45px;
     }
     .settings {
@@ -69,10 +69,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #FFD700; /* 노란색 버튼 */
+      background: #1e90ff; /* 파란색 버튼 */
       border: none;
       border-radius: 6px;
-      color: black;
+      color: white;
     }
     #iframeContainer {
       position: absolute;
@@ -151,10 +151,12 @@
       let targetTop = 110 + ratio * (window.innerHeight - 170);
 
       let diff = targetTop - parseFloat(scrollBar.style.top);
-      if (Math.abs(diff) < 10) {
-        scrollBar.style.top = `${targetTop}px`;
+      
+      // 🔥 버튼 이벤트를 막지 않도록 스크롤 업데이트 빈도 조정
+      if (Math.abs(diff) > 20) {  
+        scrollBar.style.top = `${parseFloat(scrollBar.style.top) + diff * 0.05}px`;
       } else {
-        scrollBar.style.top = `${parseFloat(scrollBar.style.top) + diff * 0.1}px`;
+        scrollBar.style.top = `${targetTop}px`;
       }
     }
 
