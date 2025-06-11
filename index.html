@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #1e90ff; /* 파란색 버튼 */
-      color: white;
+      background: #FFD700; /* 노란색 버튼 */
+      color: black;
       min-width: 45px;
     }
     .settings {
@@ -74,10 +74,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #1e90ff; /* 파란색 버튼 */
+      background: #FFD700; /* 노란색 버튼 */
       border: none;
       border-radius: 6px;
-      color: white;
+      color: black;
     }
     #iframeContainer {
       position: absolute;
@@ -130,7 +130,7 @@
   </div>
 
   <div id="iframeContainer">
-    <iframe id="webview" src="about:blank" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    <iframe id="webview" src="https://newtoki468.com"></iframe>
   </div>
 
   <!-- 세로바 -->
@@ -140,11 +140,11 @@
     let timer = null;
     let interval = 2;
     let distance = 100;
-    const iframeContainer = document.getElementById("iframeContainer");
+    const iframe = document.getElementById("webview");
     const scrollBar = document.getElementById("scrollBar");
 
     function getSiteScrollbar() {
-      return iframeContainer.contentWindow.document.documentElement || iframeContainer.contentWindow.document.body;
+      return iframe.contentWindow.document.documentElement || iframe.contentWindow.document.body;
     }
 
     function updateScrollBar() {
@@ -171,7 +171,7 @@
       }
     }
 
-    iframeContainer.addEventListener("scroll", updateScrollBar);
+    iframe.addEventListener("load", updateScrollBar);
 
     document.getElementById("startBtn").addEventListener("click", () => {
       stopScroll();
@@ -215,10 +215,6 @@
       interval = parseFloat(document.getElementById("interval").value);
       distance = parseInt(document.getElementById("distance").value);
       document.getElementById("settings").style.display = "none";
-    });
-
-    document.getElementById("urlBar button").addEventListener("click", () => {
-      document.getElementById("webview").src = document.getElementById("urlInput").value;
     });
   </script>
 </body>
