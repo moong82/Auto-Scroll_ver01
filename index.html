@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #1e90ff; /* 파란색 버튼 */
-      color: white;
+      background: #FFD700; /* 노란색 버튼 */
+      color: black;
       min-width: 45px;
     }
     .settings {
@@ -74,10 +74,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #1e90ff; /* 파란색 버튼 */
+      background: #FFD700; /* 노란색 버튼 */
       border: none;
       border-radius: 6px;
-      color: white;
+      color: black;
     }
     #iframeContainer {
       position: absolute;
@@ -108,7 +108,7 @@
 </head>
 <body>
   <div id="urlBar">
-    <input type="text" id="urlInput" placeholder="https://" />
+    <input type="text" id="urlInput" value="https://newtoki468.com" placeholder="https://" />
     <button onclick="loadSite()">이동</button>
   </div>
 
@@ -159,8 +159,11 @@
       let startY = e.clientY;
       
       function onMouseMove(e) {
+        let maxScroll = iframeContainer.scrollHeight - iframeContainer.clientHeight;
         let deltaY = e.clientY - startY;
-        moveScroll(deltaY * 2); // 드래그한 거리만큼 스크롤
+        let newScroll = iframeContainer.scrollTop + deltaY * (maxScroll / (window.innerHeight - 170));
+        iframeContainer.scrollTop = Math.max(0, Math.min(newScroll, maxScroll));
+        
         startY = e.clientY;
       }
       
