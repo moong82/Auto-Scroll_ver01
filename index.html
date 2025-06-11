@@ -67,4 +67,59 @@
 <body>
   <div class="controls" id="controls">
     <button onclick="startScroll()">Start</button>
-    <button onclic
+    <button onclick="stopScroll()">Stop</button>
+    <button onclick="scrollToTop()">Top</button>
+    <button onclick="scrollToBottom()">Down</button>
+    <button onclick="toggleSettings()">Setting</button>
+  </div>
+
+  <div class="settings" id="settings">
+    <label>스크롤 간격 (초):</label>
+    <input type="number" id="interval" value="2" min="0.1" step="0.1" />
+    <label>스크롤 거리 (픽셀):</label>
+    <input type="number" id="distance" value="100" min="1" />
+    <button onclick="saveSettings()">설정 저장</button>
+    <button onclick="toggleSettings()">뒤로가기</button>
+  </div>
+
+  <div style="height: 3000px; background: transparent; position: relative;">
+    <div style="position: fixed; top: 0; left: 0; width: 5px; height: 100%; background: rgba(30,144,255, 0.7); z-index: 1000;"></div>
+  </div>
+
+  <script>
+    let timer = null;
+    let interval = 2;
+    let distance = 100;
+
+    function startScroll() {
+      stopScroll();
+      timer = setInterval(() => {
+        window.scrollBy(0, distance);
+      }, interval * 1000);
+    }
+
+    function stopScroll() {
+      clearInterval(timer);
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function scrollToBottom() {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function toggleSettings() {
+      const s = document.getElementById("settings");
+      s.style.display = s.style.display === "block" ? "none" : "block";
+    }
+
+    function saveSettings() {
+      interval = parseFloat(document.getElementById("interval").value);
+      distance = parseInt(document.getElementById("distance").value);
+      toggleSettings();
+    }
+  </script>
+</body>
+</html>
