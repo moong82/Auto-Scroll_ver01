@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>웹툰 자동 스크롤</title>
+<style>
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background: #000;
+    color: white;
+  }
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #222;
+    padding: 8px 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;      /* 줄바꿈 방지 */
+    z-index: 3000;
+    overflow-x: auto;       /* 너무 많으면 가로 스크롤 생김 */
+  }
+  .top-bar button {
+    background: #1e90ff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;    /* 텍스트 줄바꿈 방지 */
+    flex-shrink: 0;         /* 버튼 크기 축소 방지 */
+  }
+  .url-input-container {
+    position: fixed;
+    top: 45px;
+    left: 0;
+    right: 0;
+    background: #222;
+    padding: 8px 10px;
+    display: none;
+    gap: 6px;
+    z-index: 3000;
+  }
+  .url-input-container input {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+  }
+  .url-input-container button {
+    background: #1e90ff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    color: white;
+    fo
