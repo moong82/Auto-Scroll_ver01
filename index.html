@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #32CD32; /* 녹색 버튼 */
-      color: white;
+      background: #FFD700; /* 노란색 버튼 */
+      color: black;
       min-width: 45px;
     }
     .settings {
@@ -69,10 +69,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #32CD32; /* 녹색 버튼 */
+      background: #FFD700; /* 노란색 버튼 */
       border: none;
       border-radius: 6px;
-      color: white;
+      color: black;
     }
     #iframeContainer {
       position: absolute;
@@ -125,7 +125,7 @@
   </div>
 
   <div id="iframeContainer">
-    <iframe id="webview" src="about:blank"></iframe>
+    <iframe id="webview" src="https://newtoki468.com"></iframe>
   </div>
 
   <!-- 세로바 -->
@@ -166,8 +166,9 @@
       }
     }
 
-    window.onload = function() {
+    document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("startBtn").addEventListener("click", () => {
+        console.log("Start 버튼 눌림!");
         stopScroll();
         function scrollStep() {
           moveScroll(distance);
@@ -177,11 +178,13 @@
       });
 
       document.getElementById("stopBtn").addEventListener("click", () => {
+        console.log("Stop 버튼 눌림!");
         clearTimeout(timer);
         timer = null;
       });
 
       document.getElementById("topBtn").addEventListener("click", () => {
+        console.log("Top 버튼 눌림!");
         const siteScrollbar = getSiteScrollbar();
         if (siteScrollbar) {
           siteScrollbar.scrollTop = 0;
@@ -190,6 +193,7 @@
       });
 
       document.getElementById("downBtn").addEventListener("click", () => {
+        console.log("Down 버튼 눌림!");
         const siteScrollbar = getSiteScrollbar();
         if (siteScrollbar) {
           siteScrollbar.scrollTop = siteScrollbar.scrollHeight;
@@ -198,9 +202,10 @@
       });
 
       document.getElementById("loadBtn").addEventListener("click", () => {
+        console.log("이동 버튼 눌림!");
         document.getElementById("webview").src = document.getElementById("urlInput").value;
       });
-    };
+    });
   </script>
 </body>
 </html>
