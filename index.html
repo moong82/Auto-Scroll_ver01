@@ -32,8 +32,8 @@
       font-size: 9px;
       border: none;
       border-radius: 6px;
-      background: #FFD700; /* 노란색 버튼 */
-      color: black;
+      background: #1e90ff; /* 파란색 버튼 */
+      color: white;
       min-width: 45px;
     }
     .settings {
@@ -74,9 +74,10 @@
     #urlBar button {
       padding: 4px 6px;
       font-size: 10px;
-      background: #FFD700; /* 노란색 버튼 */
+      background: #1e90ff; /* 파란색 버튼 */
       border: none;
       border-radius: 6px;
+      color: white;
     }
     #iframeContainer {
       position: absolute;
@@ -148,15 +149,34 @@
       scrollBar.style.top = `${110 + ratio * (window.innerHeight - 170)}px`;
     }
 
-    function moveScrollBar(amount) {
+    function moveScroll(amount) {
       iframeContainer.scrollTop += amount;
       updateScrollBar();
     }
 
+    // 사용자가 세로바를 직접 드래그하면 실제 화면이 스크롤되도록 설정
+    scrollBar.addEventListener("mousedown", (e) => {
+      let startY = e.clientY;
+      
+      function onMouseMove(e) {
+        let deltaY = e.clientY - startY;
+        moveScroll(deltaY * 2); // 드래그한 거리만큼 스크롤
+        startY = e.clientY;
+      }
+      
+      function onMouseUp() {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+      }
+      
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+    });
+
     function startScroll() {
       stopScroll();
       function scrollStep() {
-        moveScrollBar(distance);
+        moveScroll(distance);
         timer = setTimeout(scrollStep, interval * 1000);
       }
       scrollStep();
